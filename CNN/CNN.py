@@ -35,36 +35,36 @@ X_val = X_val / 255.0
 np.set_printoptions(linewidth=np.inf)  # Never wrap
 print(X_train[0][:,:,0])
 print("Class name:", classNames[y_train[0]])
-# model = tf.keras.Sequential([
-#     #1st conv layer
-#     tf.keras.layers.Conv2D(32, (3,3), padding='same', activation='relu', input_shape=(28,28, 1)),
-#     tf.keras.layers.MaxPooling2D((2, 2)),
-#     #2nd
-#     tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu', input_shape=(28,28,1)),
-#     tf.keras.layers.MaxPooling2D((2, 2)),
-#     tf.keras.layers.Dropout(0.3),
-#     #output layers
-#     tf.keras.layers.Flatten(),
+model = tf.keras.Sequential([
+    #1st conv layer
+    tf.keras.layers.Conv2D(32, (3,3), padding='same', activation='relu', input_shape=(28,28, 1)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    #2nd
+    tf.keras.layers.Conv2D(64, (3,3), padding='same', activation='relu', input_shape=(28,28,1)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Dropout(0.3),
+    #output layers
+    tf.keras.layers.Flatten(),
 
-#     tf.keras.layers.Dense(128, activation='relu'),
-#     tf.keras.layers.Dropout(0.5),
-#     tf.keras.layers.Dense(50, activation='softmax')
-# ])
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(50, activation='softmax')
+])
 
-# model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
-# history = model.fit(X_train, y_train, epochs=15,validation_data=(X_val,y_val))
-
-
-# def plot_graphs(history, string):
-#     plt.plot(history.history[string])
-#     plt.plot(history.history['val_'+string])
-#     plt.xlabel("Epochs")
-#     plt.ylabel(string)
-#     plt.legend([string, 'val_'+string])
-#     plt.show()
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=15,validation_data=(X_val,y_val))
 
 
-# plot_graphs(history, "accuracy")
-# plot_graphs(history, "loss")
+def plot_graphs(history, string):
+    plt.plot(history.history[string])
+    plt.plot(history.history['val_'+string])
+    plt.xlabel("Epochs")
+    plt.ylabel(string)
+    plt.legend([string, 'val_'+string])
+    plt.show()
 
-# model.save("50class_model_2.h5")
+
+plot_graphs(history, "accuracy")
+plot_graphs(history, "loss")
+
+model.save("50class_model_2.h5")
