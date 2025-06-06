@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 
-model = tf.keras.models.load_model("50class_model_1.h5")
+model = tf.keras.models.load_model("CNN/50class_model_2.h5")
 categories = ["airplane","apple","bird","book","bridge","bus","car","cat","chair","clock",
             "computer","diamond","dog","ear","eyeglasses","fish","flower","guitar","harp","hot air balloon",
             "hourglass","house","key","leaf","lightning","moon","mug","octopus","pants","pencil",

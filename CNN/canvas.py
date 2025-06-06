@@ -23,7 +23,7 @@ def draw(event):
 
 canvas = tk.Canvas(root,width=280,height=280,bg="black")
 canvas.pack()
-canvas.bind("<B1-Motion>", draw)#b1motion is draw when left moutse button 
+canvas.bind("<B1-Motion>", draw)#b1motion is draw when left moutse button  
 
 
 

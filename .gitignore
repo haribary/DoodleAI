@@ -1,3 +1,7 @@
-data/
+CNN/data/
+RNN/data/
 venv/
 __pycache__/
+
+*.h5
+*.npz

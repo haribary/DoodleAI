@@ -14,6 +14,7 @@ classNames=["airplane","apple","bird","book","bridge","bus","car","cat","chair",
 
 data = [] #shape: (50*numDrawings,maxSteps,5)
 labels = [] #50*numDrawings
+masks = [] 
 
 
 def convertToVector(line, maxSteps):#takes in 1 drawing (1 line in the ndjson file), return vector array of stroke arrays
@@ -45,10 +46,15 @@ def convertToVector(line, maxSteps):#takes in 1 drawing (1 line in the ndjson fi
         return None
     seq = np.array(strokes, dtype=np.float32)
     padding = np.zeros((maxSteps- len(seq),5), dtype=np.float32)#pad zeroes, remember mask during training !
-    return np.concatenate([seq, padding], axis=0)
+
+    #create mask
+    mask = np.zeros((maxSteps,), dtype=bool)
+    mask[:len(seq)] = True
+
+    return np.concatenate([seq, padding], axis=0), mask #padded sequence, mask
 
 
-def loadData(numDrawings): #
+def convertData(numDrawings): #Converts all the data to vector, shuffle normalize flatten convert to np arr
     for i in range (len(classNames)):
         className = classNames[i]
         count = 0
@@ -59,17 +65,23 @@ def loadData(numDrawings): #
                     break
                 try:
                     dic = json.loads(line)
-                    vec = convertToVector(dic,steps)
-                    if vec is not None:
-                        data.append(vec)
-                        labels.append(i)
-                        count+=1
+                    res = convertToVector(dic, steps)
+                    if res is None:
+                        continue
+                    
+                    vec, mask = res
+                    
+                    data.append(vec)
+                    labels.append(i)
+                    masks.append(mask)
+                    count+=1
                 except json.JSONDecodeError:
-                    continue  #skip bad lines
+                    continue  #skip bad lines just in case
     
     dataNp = np.array(data, dtype=np.float32)
     labelsNp = np.array(labels)
-    dataNp, labelsNp = shuffle(dataNp, labelsNp, random_state=42)
+    masksNp = np.array(masks, dtype=bool)
+    dataNp, labelsNp, masksNp= shuffle(dataNp, labelsNp, masksNp, random_state=42)
 
 
     #Normalization : NOT zero mean normalization (only divide mby std)
@@ -78,10 +90,12 @@ def loadData(numDrawings): #
     dataNp[:, :, 0] /= scale
     dataNp[:, :, 1] /= scale
 
-    return dataNp,labelsNp,scale
+    return dataNp,labelsNp,masksNp,scale
 
-dataNp, labelsNp, scale= loadData(numDrawings)
-np.savez_compressed("processed_data.npz",data=dataNp,labels=labelsNp,scale=scale)
+dataNp, labelsNp, masksNp, scale = convertData(numDrawings)
+
+np.savez_compressed("processed_data.npz", data=dataNp, labels=labelsNp, masks=masksNp, scale=scale)
+
 
  
                 
